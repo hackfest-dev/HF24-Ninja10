@@ -1,58 +1,85 @@
-import mongoose from 'mongoose';
-import validator from 'validator';
-import bcrypt from 'bcrypt';
+import mongoose from "mongoose";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import validator from "validator";
 
-const userSchema = mongoose.Schema({
-    email: {
-        type: String,
-        required: [true, 'please provide email'],
-        unique: [true, 'this email is already registered'],
-        lowercase: true,
-        validate: [validator.isEmail, 'invalid email'],
-    },
+
+const { Schema } = mongoose;
+
+const userSchema = new Schema({
     name: {
         type: String,
-        required: [true, 'please provide your name'],
-        trim: true,
+        required: [true, "First name is required"],
+        minLength: [3, "First name must contain at least 3 characters"]
     },
-    password: {
+    email: {
         type: String,
-        required: [true, 'please provide password'],
-        minlength: [8, 'password should have atleast 8 charters'],
-        select: false,
+        unique: true,
+        required: [true, "Email is required"],
+        validate: [validator.isEmail, "Please provide a valid email"],
+        lowercase : true,
+    },
+    phone: {
+        type: String,
+        required: [true, "Phone number is required"],
+        minLength: [10, "Phone number must contain exactly 10 digits"],
+        maxLength: [10, "Phone number must contain exactly 10 digits"]
     },
     dob: {
         type: Date,
-        required: [true, 'please provide your date of birth'],
+        required: [true, "Date of birth is required"]
     },
     gender: {
         type: String,
-        lowercase: true,
-        enum: ['male', 'female', 'others'],
-        required: [true, 'please provide your gender'],
+        required: [true, "Gender is required"],
+        lowercase : true,
+        enum: ["male", "female", 'others']
+    },
+    password: {
+        type: String,
+        required: [true, "Password is required"],
+        select: false
     },
     role: {
         type: String,
-        default: 'patient',
-        enum: ['admin', 'patient'],
+        required: [true, "Role is required"],
+        default: "patient",
+        enum: ["admin", "patient", "doctor"]
     },
-    photo: String,
-    createdAt: Date,
+    doctorDepartment: String,
+    docAvatar: {
+        public_id: String,
+        url: String
+    }
 });
 
-userSchema.pre('save', async function (next) {
-    if (!isModified('password')) return next();
-
-    this.password = await bcrypt.hash(this.password, 11);
-    this.createdAt = Date.now();
-
-    next();
+userSchema.pre("save", async function(next) {
+    if (!this.isModified("password")) {
+        return next();
+    }
+    try {
+        const hashedPassword = await bcrypt.hash(this.password, 10);
+        this.password = hashedPassword;
+        next();
+    } catch (error) {
+        next(error);
+    }
 });
 
-userSchema.methods.checkPasswordAtLogin = async function (inputPwd, actualPwd) {
-    return await bcrypt.compare(inputPwd, actualPwd);
+userSchema.methods.comparePassword = async function(enteredPassword) {
+    try {
+        return await bcrypt.compare(enteredPassword, this.password);
+    } catch (error) {
+        return false;
+    }
 };
 
-const Users = mongoose.Model('users', userSchema);
+userSchema.methods.generateJsonWebToken = function() {
+    return jwt.sign({ id: this._id }, process.env.JWT_SECRET_KEY);
+};
 
-module.exports = Users;
+const UserModel = mongoose.model("UserModel", userSchema);
+
+export default UserModel;
+
+
