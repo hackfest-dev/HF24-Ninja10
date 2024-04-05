@@ -42,10 +42,15 @@ export async function createAppointment(req,res){
         req.user = uid;
         req.patient = did
 
-
-
+       let appointment  = await appointment.create(req.body())
+       res.json({
+        data:appointment,
+        message:"appointment booked succefully"
+       })
     }
     catch(err){
-
+        res.json({
+            message:err.message
+        })
     }
 }
