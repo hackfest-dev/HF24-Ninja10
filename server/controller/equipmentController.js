@@ -55,10 +55,14 @@ export async function createEquipment(req, res) {
 
 export async function updateEquipment(req, res) {
     try {
-        const updatedEquipment = await Equipment.findByIdAndUpdate(req.params.id, req.body, {
-            new: true, // returns new object if set true
-            runValidators: true,
-        });
+        const updatedEquipment = await Equipment.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            {
+                new: true, // returns new object if set true
+                runValidators: true,
+            }
+        );
 
         if (!updatedEquipment) {
             return errorHandler(res, 404, 'invalid id');
