@@ -51,10 +51,14 @@ export async function createDoctor(req, res) {
 
 export async function updateDoctor(req, res) {
     try {
-        const updatedDoctor = await Doctor.findByIdAndUpdate(req.params.id, req.body, {
-            new: true,
-            runValidators: true,
-        });
+        const updatedDoctor = await Doctor.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            {
+                new: true,
+                runValidators: true,
+            }
+        );
 
         res.status(200).json({
             status: 'success',
@@ -75,3 +79,21 @@ export async function deleteDoctor(req, res) {
         errorHandler(res, 500, 'internal server error');
     }
 }
+import doctorModel from '../models/doctorModel';
+const getAllDoctor = async function (req, res) {
+    try {
+        let doctors = await doctorModel.find();
+        if (!doctors) {
+        } else {
+            res.json({
+                data: doctors,
+                status: 'succesfull',
+            });
+        }
+    } catch (err) {
+        res.json({
+            status: fail,
+            message: err.message,
+        });
+    }
+};

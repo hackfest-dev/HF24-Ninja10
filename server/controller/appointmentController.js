@@ -61,11 +61,22 @@ export async function updateAppointment(req, res) {
     }
 }
 
-export async function deleteAppointment(req, res) {
+export async function createAppointment(req, res) {
     try {
-        await Appointment.findByIdAndDelete(req.params.id);
-        res.status(204).end();
+        const uid = req.id;
+        const did = req.params.id;
+
+        req.user = uid;
+        req.patient = did;
+
+        let appointment = await appointment.create(req.body());
+        res.json({
+            data: appointment,
+            message: 'appointment booked succefully',
+        });
     } catch (err) {
-        errorHandler(res, 500, 'internal server error');
+        res.json({
+            message: err.message,
+        });
     }
 }
