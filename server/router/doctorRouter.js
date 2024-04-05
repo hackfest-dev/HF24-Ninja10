@@ -3,7 +3,10 @@ import * as doctorController from './../controller/doctorController.js';
 
 const router = express.Router();
 
-router.route('/').get(doctorController.getAllDoctor).post(doctorController.createDoctor);
+router
+    .route('/')
+    .get(doctorController.getAllDoctor)
+    .post(doctorController.createDoctor);
 
 router
     .route('/:id')
