@@ -54,3 +54,32 @@ export async function createAppointment(req,res){
         })
     }
 }
+
+export async function deleteAppointment(req,res){
+    try{
+
+        let aid = req.params.id
+        let appoint = await appointment.findByIdAndDelete(aid)
+        if(!appoint){
+            res.json({
+                status:"fail",
+                message:"no such appointment exist"
+            })
+        }
+        else{   
+            res.json({
+                data:appoint,
+                status:"success"
+            })
+        }
+
+    }
+    catch(err){
+        res.json({
+            status:"fail",
+            message:err.message
+        })
+    }
+}
+
+

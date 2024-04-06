@@ -138,6 +138,22 @@ const isAuthorized = async function(roles){
     
 }
 
+const updateUser = async function(req,res){
+    try{
+        const user = await userModel.findById(req.id)
+        for([key,value] in req.body){
+            user[kye] = value
+        }
+        await user.save()
+    }
+    catch(err){
+        res.json({
+            status:"fail",
+            message:err.message
+        })
+    }
+}
+
 const deleteUser = async function(req,res,next){
     try{
         let uid = req.params.id
