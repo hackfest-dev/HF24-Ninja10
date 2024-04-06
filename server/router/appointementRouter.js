@@ -1,24 +1,32 @@
-import express from "express"
-import { createAppointment, deleteAppointment, getAllAppointment, getAppointement, updateAppointment } from "../controller/appointmentController"
-const router = express.Router()
+import express from 'express';
+import {
+    createAppointment,
+    deleteAppointment,
+    getAllAppointment,
+    getAppointement,
+    updateAppointment,
+    freeModel,
+    // paidModel,
+    bookAppointment,
+} from '../controller/appointmentController.js';
 
+import { protectRoute } from './../controller/userController.js';
 
-router.get("/freeApointment",freeModel)
-router.get("/paidApointment",paidModel)
+const router = express.Router();
 
+router.get('/freeApointment', freeModel);
+// router.get('/paidApointment', paidModel);
 
+router.route('/').post(createAppointment).get(getAllAppointment);
 
-router.route("/")
-.post(createAppointment)
-.get(getAllAppointment)
+router.use(protectRoute);
 
-router.use(protectRoute)
+router.get('/book', bookAppointment);
 
-router.get("/book",bookAppointment)
+router
+    .route('/:id')
+    .get(getAppointement)
+    .patch(updateAppointment)
+    .delete(deleteAppointment);
 
-router.route("/:id")
-.get(getAppointement)
-.patch(updateAppointment)
-.delete(deleteAppointment)
-
-export default router
+export default router;

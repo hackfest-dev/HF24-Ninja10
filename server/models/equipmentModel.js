@@ -35,4 +35,4 @@ equipmentSchema.pre('save', async function (next) {
 
 const Equipment = mongoose.model('equipements', equipmentSchema);
 
-module.exports = Equipment;
+export default Equipment;

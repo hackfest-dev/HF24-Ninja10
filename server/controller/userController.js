@@ -1,7 +1,7 @@
-import userModel from '../models/userSchema.js';
+import userModel from '../models/userModel.js';
 import jwt from 'jsonwebtoken';
 
-const registerPatient = async function (req, res) {
+const createUser = async function (req, res) {
     const { name, email, phone, password, gender, dob, role } = req.body;
 
     if (!name || !email || !phone || !password || !gender || !dob || !role) {
@@ -141,17 +141,18 @@ const logout = async function (req, res) {
     }
 };
 
-const isAuthorized = async function (roles) {
-    return function (req, res, next) {
-        if (roles.includer(req.role)) {
+const isAuthorized = function (roles) {
+    return async function (req, res, next) {
+        if (roles.includes(req.role)) {
             next();
         } else {
-            res.json({
+            res.status(401).json({
                 message: 'Unauthorized',
             });
         }
     };
 };
+
 const updateUser = async function (req, res) {
     try {
         const user = await userModel.findById(req.id);
@@ -195,51 +196,57 @@ const deleteUser = async function (req, res, next) {
     }
 };
 
-const getUser = async function(req,res){
-    try{
-        const uid = req.params.id
-        const user = await userModel.findById(uid)
-        if(!user){
+const getUser = async function (req, res) {
+    try {
+        const uid = req.params.id;
+        const user = await userModel.findById(uid);
+        if (!user) {
             res.json({
-                staus:"fail",
-                message:"no such user exist"
-            })
+                staus: 'fail',
+                message: 'no such user exist',
+            });
         }
         res.json({
-            data:user,
-            status:"succes"
-        })
-
-    }
-    catch(err){
+            data: user,
+            status: 'succes',
+        });
+    } catch (err) {
         res.json({
-            status:"fail",
-            message:err.message
-        })
+            status: 'fail',
+            message: err.message,
+        });
     }
-}
+};
 
-const getAllUser = async function(req,res){
-    try{
-        let user = await userModel.find()
-        if(!user){
+const getAllUser = async function (req, res) {
+    try {
+        let user = await userModel.find();
+        if (!user) {
             res.json({
-                status:"fail",
-                message:"No user exist"
-            })
+                status: 'fail',
+                message: 'No user exist',
+            });
         }
         res.json({
-            data:user,
-            status:"success"
-        })
-    }
-    catch(err){
+            data: user,
+            status: 'success',
+        });
+    } catch (err) {
         res.json({
-            status:"fail",
-            message:err.message
-        })
+            status: 'fail',
+            message: err.message,
+        });
     }
-}
+};
 
-
-export { registerPatient, login, protectRoute, logout, deleteUser, updateUser, getUser, getAllUser, isAuthorized };
+export {
+    createUser,
+    login,
+    protectRoute,
+    logout,
+    deleteUser,
+    updateUser,
+    getUser,
+    getAllUser,
+    isAuthorized,
+};

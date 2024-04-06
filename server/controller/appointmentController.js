@@ -34,17 +34,17 @@ export async function getAppointement(req, res) {
     }
 }
 
-export async function createAppointment(req, res) {
-    try {
-        const appointment = await Appointment.create(req.body);
-        res.status(200).json({
-            status: 'success',
-            data: appointment,
-        });
-    } catch (err) {
-        errorHandler(res, 404, err.message);
-    }
-}
+// export async function createAppointment(req, res) {
+//     try {
+//         const appointment = await Appointment.create(req.body);
+//         res.status(200).json({
+//             status: 'success',
+//             data: appointment,
+//         });
+//     } catch (err) {
+//         errorHandler(res, 404, err.message);
+//     }
+// }
 
 export async function updateAppointment(req, res) {
     try {
@@ -81,41 +81,53 @@ export async function createAppointment(req, res) {
     }
 }
 
-export async function deleteAppointment(req,res){
-    try{
-
-        let aid = req.params.id
-        let appoint = await appointment.findByIdAndDelete(aid)
-        if(!appoint){
+export async function deleteAppointment(req, res) {
+    try {
+        let aid = req.params.id;
+        let appoint = await appointment.findByIdAndDelete(aid);
+        if (!appoint) {
             res.json({
-                status:"fail",
-                message:"no such appointment exist"
-            })
-        }
-        else{   
+                status: 'fail',
+                message: 'no such appointment exist',
+            });
+        } else {
             res.json({
-                data:appoint,
-                status:"success"
-            })
+                data: appoint,
+                status: 'success',
+            });
         }
-
-    }
-    catch(err){
+    } catch (err) {
         res.json({
-            status:"fail",
-            message:err.message
-        })
+            status: 'fail',
+            message: err.message,
+        });
     }
 }
-
 
 async function checkVacancy(doctorId) {
     try {
         const currentDate = new Date();
-        const startOfDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 0, 0, 0);
-        const endOfDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59);
+        const startOfDay = new Date(
+            currentDate.getFullYear(),
+            currentDate.getMonth(),
+            currentDate.getDate(),
+            0,
+            0,
+            0
+        );
+        const endOfDay = new Date(
+            currentDate.getFullYear(),
+            currentDate.getMonth(),
+            currentDate.getDate(),
+            23,
+            59,
+            59
+        );
 
-        const appointmentCount = await Appointment.countDocuments({ doctor: doctorId, createdAt: { $gte: startOfDay, $lt: endOfDay } });
+        const appointmentCount = await Appointment.countDocuments({
+            doctor: doctorId,
+            createdAt: { $gte: startOfDay, $lt: endOfDay },
+        });
         return appointmentCount < 5;
     } catch (err) {
         console.error(err);
@@ -125,14 +137,14 @@ async function checkVacancy(doctorId) {
 
 export async function bookAppointment(req, res, next) {
     const doctorId = req.params.id;
-    const patientId = req.id; 
+    const patientId = req.id;
 
     try {
         // Check if the doctor exists
         const doctor = await Doctor.findById(doctorId);
         if (!doctor) {
             return res.status(404).json({
-                message: "Doctor not found"
+                message: 'Doctor not found',
             });
         }
 
@@ -140,7 +152,8 @@ export async function bookAppointment(req, res, next) {
         const isVacant = await checkVacancy(doctorId);
         if (!isVacant) {
             return res.status(400).json({
-                message: "This doctor is fully booked for today. Please choose another doctor."
+                message:
+                    'This doctor is fully booked for today. Please choose another doctor.',
             });
         }
 
@@ -148,17 +161,17 @@ export async function bookAppointment(req, res, next) {
             patient: patientId,
             doctor: doctorId,
             title: req.body.title,
-            description: req.body.description
+            description: req.body.description,
         });
 
         res.status(201).json({
-            message: "Appointment booked successfully",
-            appointment
+            message: 'Appointment booked successfully',
+            appointment,
         });
     } catch (error) {
         console.error(error);
         res.status(500).json({
-            message: "An error occurred while booking the appointment"
+            message: 'An error occurred while booking the appointment',
         });
     }
 }
@@ -166,28 +179,27 @@ export async function bookAppointment(req, res, next) {
 export async function freeModel(req, res) {
     try {
         const allDoctors = await Doctor.find();
-        
-        const availableDoctors = await Promise.all(allDoctors.map(async (doctor) => {
-            const isVacant = await checkVacancy(doctor._id);
-            return isVacant ? doctor : null;
-        }));
 
-        const filteredDoctors = availableDoctors.filter(doctor => doctor !== null);
+        const availableDoctors = await Promise.all(
+            allDoctors.map(async (doctor) => {
+                const isVacant = await checkVacancy(doctor._id);
+                return isVacant ? doctor : null;
+            })
+        );
+
+        const filteredDoctors = availableDoctors.filter(
+            (doctor) => doctor !== null
+        );
 
         res.json({
-            status : 'success',
-            doctors: filteredDoctors
+            status: 'success',
+            doctors: filteredDoctors,
         });
     } catch (err) {
         console.error(err);
         res.status(500).json({
-            status : 'fail',
-            message: "An error occurred while fetching available doctors."
+            status: 'fail',
+            message: 'An error occurred while fetching available doctors.',
         });
     }
-};
-
-
-
-
-
+}

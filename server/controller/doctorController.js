@@ -1,6 +1,6 @@
-import Doctor from '../models/doctorModel';
-import doctorModel from '../models/doctorModel'; // same as doctor
-import appointmentModel from '../models/appointmentModel';
+import Doctor from '../models/doctorModel.js';
+import doctorModel from '../models/doctorModel.js'; // same as doctor
+import appointmentModel from '../models/appointmentModel.js';
 
 export async function getAllDoctor(req, res) {
     try {
@@ -81,23 +81,23 @@ export async function deleteDoctor(req, res) {
     }
 }
 
-const getAllDoctor = async function (req, res) {
-    try {
-        let doctors = await doctorModel.find();
-        if (!doctors) {
-        } else {
-            res.json({
-                data: doctors,
-                status: 'succesfull',
-            });
-        }
-    } catch (err) {
-        res.json({
-            status: fail,
-            message: err.message,
-        });
-    }
-};
+// const getAllDoctor = async function (req, res) {
+//     try {
+//         let doctors = await doctorModel.find();
+//         if (!doctors) {
+//         } else {
+//             res.json({
+//                 data: doctors,
+//                 status: 'succesfull',
+//             });
+//         }
+//     } catch (err) {
+//         res.json({
+//             status: fail,
+//             message: err.message,
+//         });
+//     }
+// };
 
 const checkPatientAppointment = async function (req, res) {
     try {
