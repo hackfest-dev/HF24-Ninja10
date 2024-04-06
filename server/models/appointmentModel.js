@@ -1,37 +1,56 @@
 import mongoose from 'mongoose';
 
-// appointment
-const appointmentSchema = mongoose.Schema({
-    patientId: {
-        type: String,
-        required: [true, 'issuer required'],
+const { Schema } = mongoose;
+
+// appointment schema
+const appointmentSchema = new Schema({
+    patient: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: [true, 'Patient ID is required'],
+    },
+    doctor: {
+        type: Schema.Types.ObjectId,
+        ref: 'doctors',
+        required: [true, 'Doctor ID is required'],
     },
     title: {
         type: String,
-        required: [true, 'title is required'],
+        required: [true, 'Title is required'],
     },
     description: {
         type: String,
-        required: [true, 'please provide desciption'],
+        required: [true, 'Description is required'],
     },
     status: {
         type: String,
         default: 'pending',
         enum: ['pending', 'completed'],
     },
-    cratedAt: Date,
-    reviewNotes: String,
-    reviewDate: Date,
+    createdAt: {
+        type: Date,
+        default: Date.now,
+    },
+    setDate: {
+        type: Date,
+        required: [true, 'Set date is required'],
+    },
+    reviewNotes: {
+        type: String,
+        default: '',
+    }
 });
 
-appointmentSchema.pre('save', async function (next) {
-    this.cratedAt = Date.now();
-    this.reviewDate = undefined;
-    this.reviewNotes = undefined;
-
+// Pre-save hook to update createdAt field
+appointmentSchema.pre('save', function (next) {
+    if (!this.isNew) {
+        // Only update createdAt if the document is new
+        return next();
+    }
+    this.createdAt = new Date();
     next();
 });
 
-const Appointment = mongoose.model('appointment', appointmentSchema);
+const Appointment = mongoose.model('Appointment', appointmentSchema);
 
 export default Appointment;

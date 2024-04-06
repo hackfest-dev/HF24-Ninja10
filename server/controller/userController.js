@@ -111,14 +111,14 @@ const protectRoute = async function (req, res, next) {
             return res.status(401).json({ message: "User not authenticated" });
         }
     } catch (error) {
-        return res.status(500).json({ message: "from here" });
+        return res.status(500).json({ message:err.message });
     }
 };
 
 
 const logout = async function (req, res) {
     try {
-        console.log("called")
+        
         res.cookie('login', ' ', { maxAge: 1 });
         res.json({
             status: 'success',

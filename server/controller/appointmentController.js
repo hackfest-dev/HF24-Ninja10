@@ -1,38 +1,89 @@
-import Appointment from './../models/appointmentModel.js';
+import appointment from './../models/appointmentModel.js';
 import errorHandler from './../util/errorHandler.js';
 
+export async function createAppointment(req, res) {
+    try {
+    
+        let appoint = await appointment.create(req.body);
+        res.json({
+            data: appoint,
+            message: 'appointment booked succefully',
+        });
+    } catch (err) {
+        res.json({
+            message: err.message,
+        });
+    }
+}
 export async function getAllAppointment(req, res) {
     try {
-        const appointments = await Appointment.find();
-        res.status(200).json({
-            status: 'success',
-            result: appointments.length,
-            data: {
-                appointments,
-            },
-        });
+        const appointments = await appointment.find();
+        if(appointment){
+            res.status(200).json({
+                status: 'success',
+                result: appointments.length,
+                data: {
+                    appointments,
+                },
+            });
+        }
+        else{
+            res.json({
+                status:"fail",
+                message:"no appointment"
+            })
+        }
     } catch (err) {
         errorHandler(res, 500, 'internal server error');
     }
 }
 
-export async function getAppointement(req, res) {
-    try {
-        const appointment = await Appointment.findById(req.params.id);
-        if (!appointment) {
-            return res.json({
-                status: 'fail',
-                message: 'no appointment',
-            });
+export async function updateAppointment(req,res){
+    try{
+        let aid = req.params.id
+        let appoint = await appointment.findById(aid)
+        if(!appoint){
+            res.json({
+                status:"fail",
+                message:"no such appointment exist"
+            })
         }
+        let keys = req.body
+        console.log(keys)
+        for(let key in keys){
+            appoint[key] = keys[key]
+        }
+        await appoint.save()
         res.json({
-            status: 'success',
-            data: appointment,
-        });
-    } catch (err) {
-        errorHandler(res, 500, 'internal server error');
+            data:appoint
+        })
+        
+    }
+    catch(err){
+        res.json({
+            status:"fail",
+            message:err.message
+        })
     }
 }
+
+// export async function getAppointement(req, res) {
+//     try {
+//         const appointment = await Appointment.findById(req.params.id);
+//         if (!appointment) {
+//             return res.json({
+//                 status: 'fail',
+//                 message: 'no appointment',
+//             });
+//         }
+//         res.json({
+//             status: 'success',
+//             data: appointment,
+//         });
+//     } catch (err) {
+//         errorHandler(res, 500, 'internal server error');
+//     }
+// }
 
 // export async function createAppointment(req, res) {
 //     try {
@@ -46,40 +97,21 @@ export async function getAppointement(req, res) {
 //     }
 // }
 
-export async function updateAppointment(req, res) {
-    try {
-        const updatedAppointment = await Appointment.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            {
-                new: true,
-                runValidators: true,
-            }
-        );
-    } catch (err) {
-        errorHandler(res, 404, err.message);
-    }
-}
+// export async function updateAppointment(req, res) {
+//     try {
+//         const updatedAppointment = await Appointment.findByIdAndUpdate(
+//             req.params.id,
+//             req.body,
+//             {
+//                 new: true,
+//                 runValidators: true,
+//             }
+//         );
+//     } catch (err) {
+//         errorHandler(res, 404, err.message);
+//     }
+// }
 
-export async function createAppointment(req, res) {
-    try {
-        const uid = req.id;
-        const did = req.params.id;
-
-        req.user = uid;
-        req.patient = did;
-
-        let appointment = await appointment.create(req.body());
-        res.json({
-            data: appointment,
-            message: 'appointment booked succefully',
-        });
-    } catch (err) {
-        res.json({
-            message: err.message,
-        });
-    }
-}
 
 export async function deleteAppointment(req, res) {
     try {
