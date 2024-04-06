@@ -1,20 +1,20 @@
-import React, { useState } from "react";
+// import React, { useState } from 'react';
+import { useState } from 'react';
 
 const User = () => {
-//   const [username, setUsername] = useState("");
-//   const [password, setPassword] = useState("");
+  //   const [username, setUsername] = useState("");
+  //   const [password, setPassword] = useState("");
 
-//   const handleLogin = () => {
-//     // Here you can implement your login logic
-//     console.log("Username:", username);
-//     console.log("Password:", password);
-//     // Example: send login request to backend, etc.
-//   };
-//   const age = [];
-//   for (let i = 1; i <= 75; i++) {
-//     age.push(<option key={i} value={i}>{i}</option>);
-//   }
-
+  //   const handleLogin = () => {
+  //     // Here you can implement your login logic
+  //     console.log("Username:", username);
+  //     console.log("Password:", password);
+  //     // Example: send login request to backend, etc.
+  //   };
+  //   const age = [];
+  //   for (let i = 1; i <= 75; i++) {
+  //     age.push(<option key={i} value={i}>{i}</option>);
+  //   }
 
   return (
     <>
