@@ -38,7 +38,7 @@ const login = async function (req, res) {
         let { email, password, role } = req.body;
         email = email.toLowerCase();
 
-        console.log(req.body);
+        
         if (!email || !password || !role) {
             return res.status(400).json({
                 message: 'Please fill all the details',
@@ -70,14 +70,14 @@ const login = async function (req, res) {
             });
         }
 
-        let token = user.generateJsonWebToken();
-        res.cookie('login', token, { httpOnly: true });
-        let ck = req.cookies.login;
-        console.log(ck);
+        const token = await user.generateJsonWebToken(); // Assuming generateJsonWebToken is an asynchronous function
+        await res.cookie('login', token, { httpOnly: true });
+
+
 
         res.json({
             status: 'success',
-            status: `${user.name} logged in succesfully`,
+            message: `${user.name} logged in succesfully`,
         });
     } catch (error) {
         res.status(500).json({
@@ -86,48 +86,39 @@ const login = async function (req, res) {
         });
     }
 };
-
 const protectRoute = async function (req, res, next) {
     try {
-        const token = req.cookies.login;
-
-        if (!token) {
-            return res.status(401).json({
-                status: 'fail',
-                message: 'Token not found, authorization denied',
-            });
+        if (req.cookies.login) {
+           
+            if (req.cookies.login === "logout") {
+                return res.status(401).json({ message: "User logged out" });
+            }
+            
+            const payload = jwt.verify(req.cookies.login, process.env.JWT_SECRET_KEY);
+            if (payload) {
+                const user = await userModel.findById(payload.id);
+                console.log(user)
+                if (user) {
+                    req.id = user._id;
+                    next();
+                } else {
+                    return res.status(401).json({ message: "User not found" });
+                }
+            } else {
+                return res.status(401).json({ message: "User not verified" });
+            }
+        } else {
+            return res.status(401).json({ message: "User not authenticated" });
         }
-
-        const payload = jwt.verify(token, process.env.JWT_SECRET_KEY);
-
-        if (!payload) {
-            return res.status(401).json({
-                status: 'fail',
-                message: 'Invalid token, authorization denied',
-            });
-        }
-
-        const user = await userModel.findById(payload.id);
-
-        if (!user) {
-            return res.status(401).json({
-                status: 'fail',
-                message: 'User not found, authorization denied',
-            });
-        }
-
-        req.user = user;
-        next();
-    } catch (err) {
-        res.status(401).json({
-            status: 'fail',
-            message: 'Invalid token, authorization denied',
-        });
+    } catch (error) {
+        return res.status(500).json({ message: "from here" });
     }
 };
 
+
 const logout = async function (req, res) {
     try {
+        console.log("called")
         res.cookie('login', ' ', { maxAge: 1 });
         res.json({
             status: 'success',

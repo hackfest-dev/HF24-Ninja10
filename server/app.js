@@ -1,6 +1,7 @@
 import express from 'express';
 import helmet from 'helmet';
 import mongoSantize from 'express-mongo-sanitize';
+import cookieParser from 'cookie-parser';
 
 // importing routes
 import appointmentRouter from './router/appointementRouter.js';
@@ -18,6 +19,8 @@ app.use(mongoSantize());
 
 // middlewares
 app.use(express.json());
+
+app.use(cookieParser())
 
 // route setup
 app.use('/api/user', userRouter);
