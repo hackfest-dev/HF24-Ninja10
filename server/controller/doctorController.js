@@ -1,6 +1,11 @@
 import Doctor from '../models/doctorModel.js';
 import doctorModel from '../models/doctorModel.js'; // same as doctor
 import appointmentModel from '../models/appointmentModel.js';
+import errorHandler from '../util/errorHandler.js';
+import UserModel from '../models/userModel.js';
+import jwt from "jsonwebtoken"
+
+
 
 export async function getAllDoctor(req, res) {
     try {
@@ -14,6 +19,85 @@ export async function getAllDoctor(req, res) {
         });
     } catch (err) {
         errorHandler(res, 404, err.message);
+    }
+}
+export async function doctorLogin(req, res) {
+    try {
+        const { email, password } = req.body;
+        const doctor = await doctorModel.findOne({ email }); // Find the doctor by email
+        
+        if (!doctor) {
+            return res.status(401).json({
+                status: "fail",
+                message: "Doctor not found" // Return appropriate message if doctor is not found
+            });
+        }
+
+        const isPasswordCorrect = await doctor.checkPasswordAtLogin(password); // Check if the password is correct
+
+        if (isPasswordCorrect) {
+            const token = await doctor.generateWebToken(); 
+            res.cookie('doctorLogin', token, { httpOnly: true });
+
+            return res.json({
+                status: "success",
+                message: "Login successful"
+            });
+        } else {
+            return res.status(401).json({
+                status: "fail",
+                message: "Wrong credentials"
+            });
+        }
+    } catch (err) {
+        res.status(500).json({
+            status: 'fail',
+            message: err.message
+        });
+    }
+}
+
+export async function protectRouteDoctor(req,res,next){
+    try{
+        let token = await req.cookies.doctorLogin
+       
+        let payLoad = await jwt.verify(token,process.env.JWT_SECRET_KEY)
+        
+        if(payLoad){
+            let doctor = await doctorModel.findById(payLoad.id)
+            if(doctor){
+                req.id = doctor._id
+                next()
+            }
+            else{
+                return res.status(401).json({ message: "Doctor not found" });
+            }
+        }
+        else{
+            return res.status(401).json({ message: "User not verified" });
+        }
+    }
+    catch(err){
+        res.json({
+            status:"fail",
+            message:err.message
+        })
+    }
+}
+
+export async function doctorLogout(req,res){
+    try{
+        res.cookie("doctorLogin"," ",{maxAge:1})
+        res.json({
+            status:"success",
+            message:"logout sucessfully"
+        })
+    }
+    catch(err){
+        res.json({
+            status:"fail",
+            message:err.message
+        })
     }
 }
 
@@ -81,28 +165,21 @@ export async function deleteDoctor(req, res) {
     }
 }
 
-// const getAllDoctor = async function (req, res) {
-//     try {
-//         let doctors = await doctorModel.find();
-//         if (!doctors) {
-//         } else {
-//             res.json({
-//                 data: doctors,
-//                 status: 'succesfull',
-//             });
-//         }
-//     } catch (err) {
-//         res.json({
-//             status: fail,
-//             message: err.message,
-//         });
-//     }
-// };
-
-const checkPatientAppointment = async function (req, res) {
+export async function pendingAppointment(req, res) {
     try {
-        let pid = req.params.id;
-        let patient = await appointmentModel.find({ patient: pid });
+        let did = req.id
+        let appointment = await appointmentModel.find()
+        appointment.filter(x =>{
+            return (x.doctor == did && x.status == "pending")
+        })
+
+      let patient = appointment
+        
+
+       patient =  patient.filter((x)=>{
+            return (x.status ==="pending")
+        })
+  
         if (patient) {
             res.json({
                 data: patient,
@@ -110,7 +187,7 @@ const checkPatientAppointment = async function (req, res) {
             });
         } else {
             res.json({
-                message: 'no appointment exist',
+                message: 'no pending patient',
             });
         }
     } catch (err) {
@@ -120,3 +197,5 @@ const checkPatientAppointment = async function (req, res) {
         });
     }
 };
+
+

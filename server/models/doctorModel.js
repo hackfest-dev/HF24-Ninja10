@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 import validator from 'validator';
+import bcrypt from "bcrypt"
+import jwt from "jsonwebtoken"
 
 const doctorSchema = mongoose.Schema({
     name: {
@@ -17,10 +19,6 @@ const doctorSchema = mongoose.Schema({
         type: String,
         required: [true, 'please provide password'],
     },
-    // phone: {
-    //     type: String,
-    //     required: [true, 'please provide phone'],
-    // },
     gender: {
         type: String,
         required: [true, 'please provide gender'],
@@ -36,7 +34,7 @@ const doctorSchema = mongoose.Schema({
         required: [true, 'please provide years of experience'],
     },
     speciality: {
-        type: [String],
+        type: String,
         required: [true, 'please provide speciality'],
     },
     photo: String, // url for photo
@@ -47,9 +45,13 @@ doctorSchema.pre('save', async function (next) {
     next();
 });
 
-doctorSchema.methods.checkPasswordAtLogin = async function (inputPwd, actualPwd) {
-    return await bcrypt.compare(inputPwd, actualPwd);
+doctorSchema.methods.checkPasswordAtLogin = async function (inputPwd) {
+    return await bcrypt.compare(inputPwd,this.password);
 };
+
+doctorSchema.methods.generateWebToken = async function(){
+    return jwt.sign({id:this._id},process.env.JWT_SECRET_KEY)
+}
 
 const Doctor = mongoose.model('doctors', doctorSchema);
 
