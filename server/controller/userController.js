@@ -152,16 +152,20 @@ const isAuthorized = async function (roles) {
         }
     };
 };
-
 const updateUser = async function (req, res) {
     try {
         const user = await userModel.findById(req.id);
-        for ([key, value] in req.body) {
-            user[kye] = value;
+        const obj = req.body;
+        for (const key in obj) {
+            user[key] = obj[key];
         }
         await user.save();
-    } catch (err) {
         res.json({
+            status: 'success',
+            message: 'User updated successfully',
+        });
+    } catch (err) {
+        res.status(500).json({
             status: 'fail',
             message: err.message,
         });
@@ -190,4 +194,52 @@ const deleteUser = async function (req, res, next) {
         });
     }
 };
-export { registerPatient, login, protectRoute, logout, deleteUser };
+
+const getUser = async function(req,res){
+    try{
+        const uid = req.params.id
+        const user = await userModel.findById(uid)
+        if(!user){
+            res.json({
+                staus:"fail",
+                message:"no such user exist"
+            })
+        }
+        res.json({
+            data:user,
+            status:"succes"
+        })
+
+    }
+    catch(err){
+        res.json({
+            status:"fail",
+            message:err.message
+        })
+    }
+}
+
+const getAllUser = async function(req,res){
+    try{
+        let user = await userModel.find()
+        if(!user){
+            res.json({
+                status:"fail",
+                message:"No user exist"
+            })
+        }
+        res.json({
+            data:user,
+            status:"success"
+        })
+    }
+    catch(err){
+        res.json({
+            status:"fail",
+            message:err.message
+        })
+    }
+}
+
+
+export { registerPatient, login, protectRoute, logout, deleteUser, updateUser, getUser, getAllUser, isAuthorized };

@@ -10,12 +10,22 @@ import {
 
 const user = express.user();
 
-user.post('/register', registerPatient);
-user.post('/login', login);
+
+user.route("/")
+.post(registerPatient)
+.get(getAll)
+
+
 
 user.use(protectRoute);
+
+user.route("/:id")
+.get(getUser)
+.patch(updateUser)
+.delete(deleteUser)
+
 user.get('/logout', logout);
-user.patch('/:id', updateUser);
+
 
 user.use(isAuthorized, ['admin']);
 
