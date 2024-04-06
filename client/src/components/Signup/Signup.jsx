@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import Doctor from '../Signup doctor/Doctor';
 import User from '../Signup user/User';
-function GetStarted() {
+function Signup() {
   const [showForm1, setShowForm1] = useState(true);
 
   const Change = () => {
@@ -22,4 +22,4 @@ function GetStarted() {
   );
 }
 
-export default GetStarted;
+export default Signup;
