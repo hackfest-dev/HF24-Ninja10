@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+// import React, { useState } from "react";
+import { useState } from 'react';
 
 const Doctor = () => {
-
   return (
     <>
       <div className="text-center mt-10">
@@ -104,12 +104,11 @@ const Doctor = () => {
               >
                 Experience
                 <input
-                className="appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none"
-                type="number"
-                required
-              />
+                  className="appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none"
+                  type="number"
+                  required
+                />
               </label>
-              
             </div>
 
             <div className="w-full md:w-full px-3 mb-6">
@@ -123,4 +122,5 @@ const Doctor = () => {
     </>
   );
 };
+
 export default Doctor;
