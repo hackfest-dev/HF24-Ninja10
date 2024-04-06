@@ -133,15 +133,46 @@ const logout = async function (req, res) {
     }
 };
 
-const isAuthorized = async function (roles) {
-    return function (req, res, next) {
-        if (roles.includer(req.role)) {
-            next();
-        } else {
-            res.status(401).json({
-                status: 'fail',
-                message: 'Unauthorized',
-            });
+
+const isAuthorized = async function(roles){
+    return function(req,res,next){
+        if(roles.includer(req.role)){
+            next()
+        }
+        else{
+            res.json({
+                message:"Unauthorized"
+            })
+        }
+    }
+    
+}
+
+const updateUser = async function(req,res){
+    try{
+        const user = await userModel.findById(req.id)
+        for([key,value] in req.body){
+            user[kye] = value
+        }
+        await user.save()
+    }
+    catch(err){
+        res.json({
+            status:"fail",
+            message:err.message
+        })
+    }
+}
+
+const deleteUser = async function(req,res,next){
+    try{
+        let uid = req.params.id
+        let user = await userModel.findByIdAndDelete(uid)
+        if(!user){
+            res.json({
+                message:"no such user exist"
+            })
+
         }
     };
 };

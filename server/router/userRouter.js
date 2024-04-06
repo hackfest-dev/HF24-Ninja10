@@ -8,16 +8,19 @@ import {
     isAuthorized,
 } from '../controller/userController.js';
 
-const router = express.Router();
+const user = express.user();
 
-router.post('/register', registerPatient);
-router.post('/login', login);
+user.post('/register', registerPatient);
+user.post('/login', login);
 
-router.use(protectRoute);
-router.get('/logout', logout);
+user.use(protectRoute);
+user.get('/logout', logout);
+user.patch('/:id',updateUser)
 
-router.use(isAuthorized, ['admin']);
+user.use(isAuthorized, ['admin']);
 
-router.delete('/delete', deleteUser);
+user.delete('/:id', deleteUser);
 
-export default router;
+
+
+export default user;
