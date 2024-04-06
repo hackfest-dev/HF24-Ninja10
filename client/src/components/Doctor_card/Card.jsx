@@ -1,4 +1,5 @@
 // import React from 'react';
+import PropTypes from 'prop-types';
 
 function Card(props) {
   return (
@@ -28,5 +29,12 @@ function Card(props) {
     </div>
   );
 }
+
+Card.propTypes = {
+  image: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  speciality: PropTypes.string.isRequired,
+  experience: PropTypes.string.isRequired,
+};
 
 export default Card;

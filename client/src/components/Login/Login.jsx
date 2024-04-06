@@ -1,16 +1,29 @@
 // import React from 'react';
-import { useState } from 'react';
+// import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const LoginPage = () => {
-  //   const [username, setUsername] = useState('');
-  //   const [password, setPassword] = useState('');
+  async function handleLogin(event) {
+    event.preventDefault();
 
-  //   const handleLogin = () => {
-  //     // Here you can implement your login logic
-  //     console.log('Username:', username);
-  //     console.log('Password:', password);
-  //     // Example: send login request to backend, etc.
-  //   };
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    try {
+      const response = await axios.post(
+        'http://localhost:3000/api/user/login',
+        {
+          email: email,
+          password: password,
+          role: 'patient',
+        }
+      );
+
+      console.log(response.data);
+    } catch (error) {
+      console.error('Login failed:', error.message);
+    }
+  }
 
   return (
     <>
@@ -43,6 +56,7 @@ const LoginPage = () => {
                 Email address
               </label>
               <input
+                id="email"
                 className="appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none"
                 type="email"
                 required
@@ -56,6 +70,7 @@ const LoginPage = () => {
                 Password
               </label>
               <input
+                id="password"
                 className="appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none"
                 type="password"
                 required
@@ -73,8 +88,12 @@ const LoginPage = () => {
               </label>
             </div>
             <div className="w-full md:w-full px-3 mb-6">
-              <button className="appearance-none block w-full bg-blue-600 text-gray-100 font-bold border border-gray-200 rounded-lg py-3 px-3 leading-tight hover:bg-blue-500 focus:outline-none focus:bg-white focus:border-gray-500">
-                Sign in
+              <button
+                className="appearance-none block w-full bg-blue-600 text-gray-100 font-bold border border-gray-200 rounded-lg py-3 px-3 
+              leading-tight hover:bg-blue-500 focus:outline-none focus:bg-white focus:border-gray-500"
+                onClick={handleLogin}
+              >
+                login
               </button>
             </div>
           </div>

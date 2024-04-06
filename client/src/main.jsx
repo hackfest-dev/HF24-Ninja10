@@ -1,13 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App.jsx';
-import './index.css';
 import {
   Route,
   RouterProvider,
   createBrowserRouter,
   createRoutesFromElements,
 } from 'react-router-dom';
+
+import './index.css';
+import App from './App.jsx';
 import Layout from './Layout.jsx';
 import Home from './components/Home/Home.jsx';
 import About from './components/About/About.jsx';
@@ -15,8 +16,9 @@ import Contact from './components/Contact/Contact.jsx';
 import Doctor from './components/Signup doctor/Doctor.jsx';
 import User from './components/Signup user/User.jsx';
 import Login from './components/Login/Login.jsx';
-import GetStarted from './components/Get Started/GetStarted.jsx';
+import Signup from './components/Signup/Signup.jsx';
 import Appointment from './components/Appointment/Appointment.jsx';
+import GetAllDoc from './components/GetAllDoctor/GetAllDoc.jsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -26,7 +28,8 @@ const router = createBrowserRouter(
       <Route path="contact" element={<Contact />} />
       <Route path="Appointment" element={<Appointment />} />
       <Route path="Login" element={<Login />} />
-      <Route path="GetStarted" element={<GetStarted />} />
+      <Route path="Signup" element={<Signup />} />
+      {/* <Route path="get-all-doc" element={<GetAllDoc />} /> */}
     </Route>
   )
 );

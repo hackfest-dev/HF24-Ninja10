@@ -1,7 +1,34 @@
 // import React, { useState } from "react";
 import { useState } from 'react';
+import axios from 'axios';
 
 const Doctor = () => {
+  async function handleSingUp(event) {
+    event.preventDefault();
+
+    try {
+      const data = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        password: document.getElementById('password').value,
+
+        gender: document.getElementById('gender').value,
+        address: document.getElementById('address').value,
+        experience: document.getElementById('experience').value,
+        speciality: document.getElementById('speciality').value,
+      };
+
+      const response = await axios.post(
+        'http://localhost:3000/api/doctor',
+        data
+      );
+
+      console.log(response.data);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   return (
     <>
       <div className="text-center mt-10">
@@ -33,6 +60,8 @@ const Doctor = () => {
                 Name
               </label>
               <input
+                name="name"
+                id="name"
                 className="appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none"
                 type="text"
                 required
@@ -43,24 +72,13 @@ const Doctor = () => {
                 className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                 htmlFor="email"
               >
-                Email address
+                email
               </label>
               <input
+                name="email"
+                id="email"
                 className="appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none"
                 type="email"
-                required
-              />
-            </div>
-            <div className="w-full md:w-full px-3 mb-6">
-              <label
-                className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                htmlFor="tel"
-              >
-                Phone No.
-              </label>
-              <input
-                className="appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none"
-                type="tel"
                 required
               />
             </div>
@@ -73,6 +91,8 @@ const Doctor = () => {
                 Password
               </label>
               <input
+                name="password"
+                id="password"
                 className="appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none"
                 type="password"
                 required
@@ -87,7 +107,8 @@ const Doctor = () => {
                 Gender
               </label>
               <select
-                id="genderSelect"
+                id="gender"
+                name="gender"
                 className="block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none"
               >
                 <option value="male">Select Gender</option>
@@ -104,6 +125,8 @@ const Doctor = () => {
               >
                 Experience
                 <input
+                  id="experience"
+                  name="experience"
                   className="appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none"
                   type="number"
                   required
@@ -112,7 +135,41 @@ const Doctor = () => {
             </div>
 
             <div className="w-full md:w-full px-3 mb-6">
-              <button className="appearance-none block w-full bg-blue-600 text-gray-100 font-bold border border-gray-200 rounded-lg py-3 px-3 leading-tight hover:bg-blue-500 focus:outline-none focus:bg-white focus:border-gray-500">
+              <label
+                className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                htmlFor="Experience"
+              >
+                Location
+                <input
+                  id="address"
+                  name="address"
+                  className="appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none"
+                  type="text"
+                  required
+                />
+              </label>
+            </div>
+
+            <div className="w-full md:w-full px-3 mb-6">
+              <label
+                className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                htmlFor="tel"
+              >
+                Speciality
+              </label>
+              <input
+                id="speciality"
+                className="appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none"
+                type="tel"
+                required
+              />
+            </div>
+
+            <div className="w-full md:w-full px-3 mb-6">
+              <button
+                className="appearance-none block w-full bg-blue-600 text-gray-100 font-bold border border-gray-200 rounded-lg py-3 px-3 leading-tight hover:bg-blue-500 focus:outline-none focus:bg-white focus:border-gray-500"
+                onClick={handleSingUp}
+              >
                 Sign up
               </button>
             </div>
