@@ -1,5 +1,5 @@
-import Equipment from './../models/equipmentModel';
-import errorHandler from './../util/errorHandler';
+import Equipment from './../models/equipmentModel.js';
+import errorHandler from './../util/errorHandler.js';
 
 export async function getAllEquipment(req, res) {
     try {
